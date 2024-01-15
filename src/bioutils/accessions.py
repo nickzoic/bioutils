@@ -51,28 +51,25 @@ MGP_PWKPhJ_ MGP_PahariEiJ_ MGP_SPRETEiJ_ MGP_WSBEiJ_""".split()
 _ensembl_feature_types_re = r"E|FM|G|GT|P|R|T"
 _ensembl_re = r"^(?:{})(?:{}){}$".format(_ensembl_species_prefixes, _ensembl_feature_types_re, r"\d{11}(?:\.\d+)?")
 
-# map of regexp => namespace
-# TODO: make this namespace => [regexps] for clarity
+# map of namespace => [regexps]
 # namespaces follow convention of identifiers.org
 ac_namespace_regexps = {
     # https://uswest.ensembl.org/info/genome/stable_ids/prefixes.html
     # [species prefix][feature type prefix][a unique eleven digit number]
     # N.B. The regexp at http://identifiers.org/ensembl appears broken:
     # 1) Human only; 2) escaped backslashes (\\d rather than \d).
-    _ensembl_re: "ensembl",
+    "ensembl": [re.compile(_ensembl_re)],
     # http://identifiers.org/insdc/
     # P12345, a UniProtKB accession matches the miriam regexp but shouldn't (I think)
-    r"^([A-Z]\d{5}|[A-Z]{2}\d{6}|[A-Z]{4}\d{8}|[A-J][A-Z]{2}\d{5})(\.\d+)?$": "insdc",
+    "insdc": [re.compile(r"^([A-Z]\d{5}|[A-Z]{2}\d{6}|[A-Z]{4}\d{8}|[A-J][A-Z]{2}\d{5})(\.\d+)?$")],
     # http://identifiers.org/refseq/
     # https://www.ncbi.nlm.nih.gov/books/NBK21091/table/ch18.T.refseq_accession_numbers_and_mole/
-    r"^((AC|AP|NC|NG|NM|NP|NR|NT|NW|XM|XP|XR|YP|ZP)_\d+|(NZ\_[A-Z]{4}\d+))(\.\d+)?$": "refseq",
+    "refseq": [re.compile(r"^((AC|AP|NC|NG|NM|NP|NR|NT|NW|XM|XP|XR|YP|ZP)_\d+|(NZ\_[A-Z]{4}\d+))(\.\d+)?$")],
     # Uniprot
     # http://identifiers.org/uniprot/
     # https://www.uniprot.org/help/accession_numbers
-    r"^(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})$": "uniprot",
+    "uniprot": [re.compile(r"^(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})$")],
 }
-
-ac_namespace_regexps = {re.compile(k): v for k, v in ac_namespace_regexps.items()}
 
 
 def chr22XY(c):
@@ -235,7 +232,7 @@ def infer_namespaces(ac):
         >>> infer_namespaces("A0A022YWF9")
         ['uniprot']
     """
-    return [v for k, v in ac_namespace_regexps.items() if k.match(ac)]
+    return [k for k, vv in ac_namespace_regexps.items() if any(v.match(ac) for v in vv)]
 
 
 def prepend_chr(chr):
