@@ -7,7 +7,7 @@ import copy
 import enum
 import logging
 import math
-from typing import Optional
+from typing import Optional, Sequence
 
 import attr
 
@@ -375,7 +375,7 @@ if __name__ == "__main__":  # pragma: no cover
     #    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0
     #     C C C C C C C C A C A C A C A C A C T A G C A G C A G C A T
 
-    tests = [
+    tests : list[dict[str, Optional[Sequence[int | str | None]]]] = [
         # {"interval": (5,5), "alleles": [None, "C"]},
         # {"interval": (5,6), "alleles": [None, "CC"]},
         # {"interval": (5,6), "alleles": [None, ""]},

@@ -7,7 +7,7 @@ This module may be used by other biocommons packages
 import logging
 import sys
 
-__all__ = []
+__all__ : list = []
 
 version_warning = (
     "biocommons packages are tested and supported only on Python >= 3.6"
