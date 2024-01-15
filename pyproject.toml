@@ -43,6 +43,8 @@ requires = [
 	 ]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.package_data]
+"bioutils" = ["py.typed"]
 
 [tool.setuptools_scm]
 
